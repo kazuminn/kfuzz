@@ -1,5 +1,21 @@
 const std = @import("std");
 
-pub fn main() anyerror!void {
-    std.debug.warn("Congratulations on your first step to writing perfect software in Zen.\n");
+pub fn doFuzz(fuzz : u1) u1 {
+    return 1;
+}
+
+pub fn genFuzz() u1 {
+    return 1;
+}
+
+pub fn dump() void {}
+
+pub fn main() void {
+    while(true) {
+        var fuzz = genFuzz();
+        var ret_code = doFuzz(fuzz);
+        if (ret_code > 0) {
+            dump(); 
+        }
+    }
 }
