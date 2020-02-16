@@ -62,6 +62,9 @@ const Fuzzer = struct {
     }
 
     pub fn doFuzz(self : Self) u1 {
+        if(self.fuzz.len == 0){
+            return 0;
+        }
         return 1;
     }
 
