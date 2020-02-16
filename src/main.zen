@@ -1,9 +1,12 @@
 const std = @import("std");
 const File = std.fs.File;
-
+const heap = std.heap;
+const ArrayList = std.container.ArrayList;
+const y = 3;
 const Fuzzer = struct {
     const Self = @This();
 
+    fuzz : []u8,
     log_file : File,
 
     pub fn new() Fuzzer {
@@ -12,7 +15,37 @@ const Fuzzer = struct {
         };
         return Fuzzer{
             .log_file = file,
+            .fuzz = &"",
         };
+    }
+
+    pub fn genFuzz(self : *Self) void {
+        //ランダム文字列で埋めるための準備
+        const DefaultPrng = std.rand.DefaultPrng;
+        var buf: [8]u8 = undefined;
+        std.crypto.randomBytes(buf[0..]) catch |err| {
+            std.debug.panic("not open file : {}\n", err);
+        };
+
+        const seed = std.mem.readIntNative(u64, &buf);
+
+        var r = DefaultPrng.init(seed);
+
+        var holder : [99]u8 = undefined;
+
+        // アロケータの準備
+        var bytes: [1024]u8 = undefined;
+        var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
+
+        // `usize`を格納するArrayListの初期化。`deinit`でメモリを解放
+        var list = ArrayList(usize){ .allocator = &allocator };
+        defer list.deinit();
+
+        std.rand.bytes(&r,&holder);
+
+        var tmp_holder = genStr(&holder);
+        var new_holder = tmp_holder.toSlice();
+        self.fuzz = new_holder; 
     }
 
     pub fn doFuzz(self : Self) u1 {
@@ -24,11 +57,37 @@ const Fuzzer = struct {
             std.debug.panic("not write to file : {}\n", err);
         };
     }
+
+    fn genStr(holder : []u8) ArrayList(u8) {
+        // アロケータの準備
+        var bytes: [1024]u8 = undefined;
+        var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
+        // `usize`を格納するArrayListの初期化。`deinit`でメモリを解放
+        var list = ArrayList(u8){ .allocator = &allocator };
+
+        for (holder) |value| {
+            switch (value) {
+                0x21 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x7E => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                else => {},
+            }
+        }
+        return list;
+    }
 };
 
 pub fn main() void {
-    const fuzz = Fuzzer.new();
-    while(true) {
+    var fuzz = Fuzzer.new();
+        fuzz.genFuzz();
+    while(true){
         var ret_code = fuzz.doFuzz();
         if (ret_code > 0) {
             fuzz.dump(ret_code, fuzz); 
