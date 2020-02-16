@@ -3,6 +3,18 @@ const File = std.fs.File;
 const heap = std.heap;
 const ArrayList = std.container.ArrayList;
 const y = 3;
+
+pub fn main() void {
+    var fuzz = Fuzzer.new();
+    while(true){
+        fuzz.genFuzz();
+        var ret_code = fuzz.doFuzz();
+        if (ret_code > 0) {
+            fuzz.dump(ret_code, fuzz); 
+        }
+    }
+}
+
 const Fuzzer = struct {
     const Self = @This();
 
@@ -45,6 +57,7 @@ const Fuzzer = struct {
 
         var tmp_holder = genStr(&holder);
         var new_holder = tmp_holder.toSlice();
+        std.debug.warn("not write to file : {}\n", new_holder);
         self.fuzz = new_holder; 
     }
 
@@ -62,12 +75,52 @@ const Fuzzer = struct {
         // アロケータの準備
         var bytes: [1024]u8 = undefined;
         var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
-        // `usize`を格納するArrayListの初期化。`deinit`でメモリを解放
+        // `u8`を格納するArrayListの初期化。`deinit`でメモリを解放
         var list = ArrayList(u8){ .allocator = &allocator };
 
         for (holder) |value| {
             switch (value) {
                 0x21 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x22 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x23 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x24 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x25 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x26 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x27 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x28 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("not write to file : {}\n", err);
+                    };
+                },
+                0x29 => {
                     list.append(value) catch |err| {
                         std.debug.panic("not write to file : {}\n", err);
                     };
@@ -84,13 +137,3 @@ const Fuzzer = struct {
     }
 };
 
-pub fn main() void {
-    var fuzz = Fuzzer.new();
-        fuzz.genFuzz();
-    while(true){
-        var ret_code = fuzz.doFuzz();
-        if (ret_code > 0) {
-            fuzz.dump(ret_code, fuzz); 
-        }
-    }
-}
