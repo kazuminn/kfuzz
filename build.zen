@@ -4,6 +4,7 @@ pub fn build(b: *Builder) void {
     const mode = b.standardReleaseOptions();
     const exe = b.addExecutable("kfuzz", "src/main.zen");
     exe.setBuildMode(mode);
+    exe.linkSystemLibrary("c");
     exe.install();
 
     const run_cmd = exe.run();
