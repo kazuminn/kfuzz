@@ -2,6 +2,7 @@ const std = @import("std");
 const File = std.fs.File;
 const heap = std.heap;
 const ArrayList = std.container.ArrayList;
+const ChildProcess = std.process.ChildProcess;
 const y = 3;
 
 pub fn main() void {
@@ -57,18 +58,28 @@ const Fuzzer = struct {
 
         var tmp_holder = genStr(&holder);
         var new_holder = tmp_holder.toSlice();
-        std.debug.warn("not write to file : {}\n", new_holder);
         self.fuzz = new_holder; 
     }
 
-    pub fn doFuzz(self : Self) u1 {
+    pub fn doFuzz(self : Self) u32 {
         if(self.fuzz.len == 0){
             return 0;
         }
-        return 1;
+
+        const argv = &[_][]const u8 {"ls", "-lha"};
+
+        const result = ChildProcess.exec(&heap.c_allocator, argv, null, null, 4096) catch |err| {
+            std.debug.panic("can not process.exec : {}\n", err);
+        };
+        switch (result.term) {
+            .Exited => return result.term.Exited,
+            .Signal => return result.term.Signal,
+            .Stopped => return result.term.Stopped,
+            .Unknown => return result.term.Unknown,
+        }
     }
 
-    pub fn dump(self : Self, ret_code : u1, fuzz : Fuzzer) void {
+    pub fn dump(self : Self, ret_code : u32, fuzz : Fuzzer) void {
         self.log_file.write("a") catch |err| {
             std.debug.panic("not write to file : {}\n", err);
         };
