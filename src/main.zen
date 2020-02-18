@@ -1,17 +1,19 @@
 const std = @import("std");
 const File = std.fs.File;
 const heap = std.heap;
+const os = std.os;
 const ArrayList = std.container.ArrayList;
 const ChildProcess = std.process.ChildProcess;
-const y = 3;
 
 pub fn main() void {
-    var fuzz = Fuzzer.new();
-    while(true){
-        fuzz.genFuzz();
-        var ret_code = fuzz.doFuzz();
-        if (ret_code > 0) {
-            fuzz.dump(ret_code, fuzz); 
+    var fuzzer = Fuzzer.new();
+    while (true) {
+        fuzzer.genFuzz();
+            std.debug.warn("hoge : {}\n", fuzzer.fuzz);
+        const ret_code = fuzzer.doFuzz();
+            std.debug.warn("huga : {}\n", fuzzer.fuzz);
+        if (ret_code == 0) {
+            fuzzer.dump(ret_code);
         }
     }
 }
@@ -19,8 +21,8 @@ pub fn main() void {
 const Fuzzer = struct {
     const Self = @This();
 
-    fuzz : []u8,
-    log_file : File,
+    fuzz: []u8,
+    log_file: File,
 
     pub fn new() Fuzzer {
         var file = File.openWrite("./dump.csv") catch |err| {
@@ -32,7 +34,7 @@ const Fuzzer = struct {
         };
     }
 
-    pub fn genFuzz(self : *Self) void {
+    pub fn genFuzz(self: *Self) void {
         //ランダム文字列で埋めるための準備
         const DefaultPrng = std.rand.DefaultPrng;
         var buf: [8]u8 = undefined;
@@ -44,7 +46,7 @@ const Fuzzer = struct {
 
         var r = DefaultPrng.init(seed);
 
-        var holder : [99]u8 = undefined;
+        var holder: [99]u8 = undefined;
 
         // アロケータの準備
         var bytes: [1024]u8 = undefined;
@@ -54,23 +56,24 @@ const Fuzzer = struct {
         var list = ArrayList(usize){ .allocator = &allocator };
         defer list.deinit();
 
-        std.rand.bytes(&r,&holder);
+        std.rand.bytes(&r, &holder);
 
         var tmp_holder = genStr(&holder);
         var new_holder = tmp_holder.toSlice();
-        self.fuzz = new_holder; 
+        self.fuzz = new_holder;
     }
 
-    pub fn doFuzz(self : Self) u32 {
-        if(self.fuzz.len == 0){
+    pub fn doFuzz(self: Self) u32 {
+        if (self.fuzz.len == 0) {
             return 0;
         }
-
-        const argv = &[_][]const u8 {"ls", "-lha"};
+        const argv = &[_][]const u8{"ls", self.fuzz};
 
         const result = ChildProcess.exec(&heap.c_allocator, argv, null, null, 4096) catch |err| {
             std.debug.panic("can not process.exec : {}\n", err);
         };
+        std.debug.warn("piyo : {}\n", self.fuzz);
+
         switch (result.term) {
             .Exited => return result.term.Exited,
             .Signal => return result.term.Signal,
@@ -79,13 +82,22 @@ const Fuzzer = struct {
         }
     }
 
-    pub fn dump(self : Self, ret_code : u32, fuzz : Fuzzer) void {
-        self.log_file.write("a") catch |err| {
+    pub fn dump(self: Self, ret_code: u32) void {
+        var buf: [1024]u8 = undefined;
+        const status_code = std.fmt.bufPrint(&buf, "{d}", ret_code) catch |err| {
+            std.debug.panic("can not bufPrint : {}\n", err);
+        };
+
+        const output = std.mem.concat(&heap.c_allocator, u8, [_][]const u8{ status_code, ",", self.fuzz, "\n" }) catch |err| {
+            std.debug.panic("can not mem.concat : {}\n", err);
+        };
+
+        self.log_file.write(output) catch |err| {
             std.debug.panic("not write to file : {}\n", err);
         };
     }
 
-    fn genStr(holder : []u8) ArrayList(u8) {
+    fn genStr(holder: []u8) ArrayList(u8) {
         // アロケータの準備
         var bytes: [1024]u8 = undefined;
         var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
@@ -150,4 +162,3 @@ const Fuzzer = struct {
         return list;
     }
 };
-
