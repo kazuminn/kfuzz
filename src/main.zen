@@ -6,14 +6,12 @@ const ArrayList = std.container.ArrayList;
 const ChildProcess = std.process.ChildProcess;
 
 pub fn main() void {
-
     var fuzzer = Fuzzer.new();
     while (true) {
-    var bytes: [109]u8 = undefined;
-    var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
+        var bytes: [109]u8 = undefined;
+        var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
 
-    // `usize`を格納するArrayListの初期化。`deinit`でメモリを解放
-    var list = ArrayList(u8){ .allocator = &mut allocator };
+        var list = ArrayList(u8){ .allocator = &mut allocator };
         fuzzer.genFuzz(&mut list);
         const ret_code = fuzzer.doFuzz();
         if (ret_code == 0) {
@@ -30,15 +28,14 @@ const Fuzzer = struct {
     log_file: std.fs.File,
 
     pub fn new() Fuzzer {
-
-        const openFlags = std.fs.File.OpenFlags{ .read = true, .write = true};
-        const filename : []u8= "./dump.csv";
+        const openFlags = std.fs.File.OpenFlags{ .read = true, .write = true };
+        const filename: []u8 = "./dump.csv";
         var file = File.openFile(filename, openFlags) catch |err| {
             std.debug.panic("not open file : {}\n", .{err});
         };
         return Fuzzer{
             .log_file = file,
-            .fuzz = ""[0..]
+            .fuzz = ""[0..],
         };
     }
 
@@ -58,7 +55,7 @@ const Fuzzer = struct {
 
         std.rand.bytes(&mut r, &mut holder);
 
-        var tmp_holder = genStr(&mut holder,list);
+        var tmp_holder = genStr(&mut holder, list);
         var new_holder = tmp_holder.toSlice();
         self.fuzz = new_holder;
     }
@@ -68,7 +65,7 @@ const Fuzzer = struct {
             return 0;
         }
         const argv = &mut [_][]u8{ "ls", self.fuzz };
-        const argv_result = .{ .allocator = heap.c_allocator, .argv = argv, .cwd = null, .cwd_dir = null, .env_map = null, .max_output_bytes = 4096};
+        const argv_result = .{ .allocator = heap.c_allocator, .argv = argv, .cwd = null, .cwd_dir = null, .env_map = null, .max_output_bytes = 4096 };
         const result = ChildProcess.exec(argv_result) catch |err| {
             std.debug.panic("can not process.exec : {}\n", .{err});
         };
@@ -106,8 +103,8 @@ const Fuzzer = struct {
                 },
                 0x22 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("can not append : {}\n", .{err});
-                    };    
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
                 },
                 0x23 => {
                     list.append(value) catch |err| {
@@ -181,8 +178,8 @@ const Fuzzer = struct {
                 },
                 0x32 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("can not append : {}\n", .{err});
-                    };    
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
                 },
                 0x33 => {
                     list.append(value) catch |err| {
@@ -256,8 +253,8 @@ const Fuzzer = struct {
                 },
                 0x42 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("can not append : {}\n", .{err});
-                    };    
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
                 },
                 0x43 => {
                     list.append(value) catch |err| {
@@ -331,8 +328,8 @@ const Fuzzer = struct {
                 },
                 0x52 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("can not append : {}\n", .{err});
-                    };    
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
                 },
                 0x53 => {
                     list.append(value) catch |err| {
@@ -406,8 +403,8 @@ const Fuzzer = struct {
                 },
                 0x62 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("can not append : {}\n", .{err});
-                    };    
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
                 },
                 0x63 => {
                     list.append(value) catch |err| {
@@ -481,8 +478,8 @@ const Fuzzer = struct {
                 },
                 0x72 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("can not append : {}\n", .{err});
-                    };    
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
                 },
                 0x73 => {
                     list.append(value) catch |err| {
