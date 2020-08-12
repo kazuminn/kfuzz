@@ -101,52 +101,447 @@ const Fuzzer = struct {
             switch (value) {
                 0x21 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x22 => {
                     list.append(value) catch |err| {
-                       std.debug.panic("not write to file : {}\n", .{err});
+                       std.debug.panic("can not append : {}\n", .{err});
                     };    
                 },
                 0x23 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x24 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x25 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x26 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x27 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x28 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x29 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x2A => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x2B => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x2C => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x2D => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x2E => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x2F => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x31 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x32 => {
+                    list.append(value) catch |err| {
+                       std.debug.panic("can not append : {}\n", .{err});
+                    };    
+                },
+                0x33 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x34 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x35 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x36 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x37 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x38 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x39 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x3A => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x3B => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x3C => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x3D => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x3E => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x3F => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x41 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x42 => {
+                    list.append(value) catch |err| {
+                       std.debug.panic("can not append : {}\n", .{err});
+                    };    
+                },
+                0x43 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x44 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x45 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x46 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x47 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x48 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x49 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x4A => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x4B => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x4C => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x4D => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x4E => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x4F => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x51 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x52 => {
+                    list.append(value) catch |err| {
+                       std.debug.panic("can not append : {}\n", .{err});
+                    };    
+                },
+                0x53 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x54 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x55 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x56 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x57 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x58 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x59 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x5A => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x5B => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x5C => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x5D => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x5E => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x5F => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x61 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x62 => {
+                    list.append(value) catch |err| {
+                       std.debug.panic("can not append : {}\n", .{err});
+                    };    
+                },
+                0x63 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x64 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x65 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x66 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x67 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x68 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x69 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x6A => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x6B => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x6C => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x6D => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x6E => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x6F => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x71 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x72 => {
+                    list.append(value) catch |err| {
+                       std.debug.panic("can not append : {}\n", .{err});
+                    };    
+                },
+                0x73 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x74 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x75 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x76 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x77 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x78 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x79 => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x7A => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x7B => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x7C => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
+                    };
+                },
+                0x7D => {
+                    list.append(value) catch |err| {
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 0x7E => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", .{err});
+                        std.debug.panic("can not append : {}\n", .{err});
                     };
                 },
                 else => {},
