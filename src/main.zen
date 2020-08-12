@@ -1,64 +1,64 @@
 const std = @import("std");
-const File = std.fs.File;
+const File = std.fs.cwd();
 const heap = std.heap;
 const os = std.os;
 const ArrayList = std.container.ArrayList;
 const ChildProcess = std.process.ChildProcess;
 
 pub fn main() void {
+
     var fuzzer = Fuzzer.new();
     while (true) {
-        fuzzer.genFuzz();
-            std.debug.warn("hoge : {}\n", fuzzer.fuzz);
+    var bytes: [109]u8 = undefined;
+    var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
+
+    // `usize`を格納するArrayListの初期化。`deinit`でメモリを解放
+    var list = ArrayList(u8){ .allocator = &mut allocator };
+        fuzzer.genFuzz(&mut list);
         const ret_code = fuzzer.doFuzz();
-            std.debug.warn("huga : {}\n", fuzzer.fuzz);
         if (ret_code == 0) {
             fuzzer.dump(ret_code);
         }
+        list.deinit();
     }
 }
 
 const Fuzzer = struct {
     const Self = @This();
 
-    fuzz: []u8,
-    log_file: File,
+    fuzz: []mut u8,
+    log_file: std.fs.File,
 
     pub fn new() Fuzzer {
-        var file = File.openWrite("./dump.csv") catch |err| {
-            std.debug.panic("not open file : {}\n", err);
+
+        const openFlags = std.fs.File.OpenFlags{ .read = true, .write = true};
+        const filename : []u8= "./dump.csv";
+        var file = File.openFile(filename, openFlags) catch |err| {
+            std.debug.panic("not open file : {}\n", .{err});
         };
         return Fuzzer{
             .log_file = file,
-            .fuzz = &"",
+            .fuzz = ""[0..]
         };
     }
 
-    pub fn genFuzz(self: *Self) void {
+    pub fn genFuzz(self: *mut Self, list: *mut ArrayList(u8)) void {
         //ランダム文字列で埋めるための準備
         const DefaultPrng = std.rand.DefaultPrng;
         var buf: [8]u8 = undefined;
         std.crypto.randomBytes(buf[0..]) catch |err| {
-            std.debug.panic("not open file : {}\n", err);
+            std.debug.panic("not open file : {}\n", .{err});
         };
 
-        const seed = std.mem.readIntNative(u64, &buf);
+        const seed = std.mem.readIntNative(u64, &mut buf);
 
         var r = DefaultPrng.init(seed);
 
         var holder: [99]u8 = undefined;
 
-        // アロケータの準備
-        var bytes: [1024]u8 = undefined;
-        var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
+        std.rand.bytes(&mut r, &mut holder);
 
-        // `usize`を格納するArrayListの初期化。`deinit`でメモリを解放
-        var list = ArrayList(usize){ .allocator = &allocator };
-        defer list.deinit();
-
-        std.rand.bytes(&r, &holder);
-
-        var tmp_holder = genStr(&holder);
+        var tmp_holder = genStr(&mut holder,list);
         var new_holder = tmp_holder.toSlice();
         self.fuzz = new_holder;
     }
@@ -67,12 +67,11 @@ const Fuzzer = struct {
         if (self.fuzz.len == 0) {
             return 0;
         }
-        const argv = &[_][]const u8{"ls", self.fuzz};
-
-        const result = ChildProcess.exec(&heap.c_allocator, argv, null, null, 4096) catch |err| {
-            std.debug.panic("can not process.exec : {}\n", err);
+        const argv = &mut [_][]u8{ "ls", self.fuzz };
+        const argv_result = .{ .allocator = heap.c_allocator, .argv = argv, .cwd = null, .cwd_dir = null, .env_map = null, .max_output_bytes = 4096};
+        const result = ChildProcess.exec(argv_result) catch |err| {
+            std.debug.panic("can not process.exec : {}\n", .{err});
         };
-        std.debug.warn("piyo : {}\n", self.fuzz);
 
         switch (result.term) {
             .Exited => return result.term.Exited,
@@ -84,81 +83,75 @@ const Fuzzer = struct {
 
     pub fn dump(self: Self, ret_code: u32) void {
         var buf: [1024]u8 = undefined;
-        const status_code = std.fmt.bufPrint(&buf, "{d}", ret_code) catch |err| {
-            std.debug.panic("can not bufPrint : {}\n", err);
+        const status_code = std.fmt.bufPrint(&mut buf, "{d}", .{ret_code}) catch |err| {
+            std.debug.panic("can not bufPrint : {}\n", .{err});
+        };
+        var concat = [_][]u8{ status_code, ",", self.fuzz, "\n" };
+        const output = std.mem.concat(heap.c_allocator, u8, concat[0..]) catch |err| {
+            std.debug.panic("can not mem.concat : {}\n", .{err});
         };
 
-        const output = std.mem.concat(&heap.c_allocator, u8, [_][]const u8{ status_code, ",", self.fuzz, "\n" }) catch |err| {
-            std.debug.panic("can not mem.concat : {}\n", err);
-        };
-
-        self.log_file.write(output) catch |err| {
-            std.debug.panic("not write to file : {}\n", err);
+        const log_output = self.log_file.write(output) catch |err| {
+            std.debug.panic("not write to file : {}\n", .{err});
         };
     }
 
-    fn genStr(holder: []u8) ArrayList(u8) {
-        // アロケータの準備
-        var bytes: [1024]u8 = undefined;
-        var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
-        // `u8`を格納するArrayListの初期化。`deinit`でメモリを解放
-        var list = ArrayList(u8){ .allocator = &allocator };
-
+    fn genStr(holder: []mut u8, list: *mut ArrayList(u8)) ArrayList(u8) {
         for (holder) |value| {
             switch (value) {
                 0x21 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x22 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
-                    };
+                       std.debug.panic("not write to file : {}\n", .{err});
+                    };    
                 },
                 0x23 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x24 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x25 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x26 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x27 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x28 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x29 => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 0x7E => {
                     list.append(value) catch |err| {
-                        std.debug.panic("not write to file : {}\n", err);
+                        std.debug.panic("not write to file : {}\n", .{err});
                     };
                 },
                 else => {},
             }
         }
-        return list;
+        return list.*;
     }
 };
