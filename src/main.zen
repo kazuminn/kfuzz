@@ -2,8 +2,14 @@ const std = @import("std");
 const File = std.fs.cwd();
 const heap = std.heap;
 const os = std.os;
+const fmt = std.fmt;
 const ArrayList = std.container.ArrayList;
 const ChildProcess = std.process.ChildProcess;
+
+var globalBytes: [109]u8 = undefined;
+var globalAllocator = heap.FixedBufferAllocator{ .buffer = globalBytes[0..] };
+
+var globalList = ArrayList([]mut u8){ .allocator = &mut globalAllocator };
 
 pub fn main() void {
     var fuzzer = Fuzzer.new();
@@ -12,7 +18,7 @@ pub fn main() void {
         var allocator = heap.FixedBufferAllocator{ .buffer = bytes[0..] };
 
         var list = ArrayList(u8){ .allocator = &mut allocator };
-        fuzzer.genFuzz(&mut list);
+        _ = fuzzer.genFuzz(&mut list);
         const ret_code = fuzzer.doFuzz();
         if (ret_code == 0) {
             fuzzer.dump(ret_code);
@@ -20,6 +26,20 @@ pub fn main() void {
         list.deinit();
     }
 }
+
+const Gene = struct {
+    pub fn cross(fuzz: *mut Fuzzer) u8 {
+        if(globalList.len() < 2){
+            return 1;
+        }
+        var pop = globalList.pop();
+        var head = globalList.at(0);
+
+        fuzz.fuzz = head.*;
+        fuzz.fuzz[0] = pop[0];
+        return 0;
+    }
+};
 
 const Fuzzer = struct {
     const Self = @This();
@@ -39,7 +59,11 @@ const Fuzzer = struct {
         };
     }
 
-    pub fn genFuzz(self: *mut Self, list: *mut ArrayList(u8)) void {
+    pub fn genFuzz(self: *mut Self, list: *mut ArrayList(u8)) u8 {
+        _ = Gene.cross(self);
+        if (self.fuzz.len != 0) {
+            return 0;
+        }
         //ランダム文字列で埋めるための準備
         const DefaultPrng = std.rand.DefaultPrng;
         var buf: [8]u8 = undefined;
@@ -58,6 +82,7 @@ const Fuzzer = struct {
         var tmp_holder = genStr(&mut holder, list);
         var new_holder = tmp_holder.toSlice();
         self.fuzz = new_holder;
+        return 0;
     }
 
     pub fn doFuzz(self: Self) u32 {
